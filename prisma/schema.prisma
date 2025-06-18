@@ -1,3 +1,6 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,27 +11,26 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  name      String
-  email     String    @unique
+  id        String   @id @default(cuid())
+  email     String   @unique
   password  String
-  role      Role      @default(USER)
-  createdAt DateTime  @default(now())
+  name      String
+  role      String   @default("USER")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   posts     Post[]
-  sentMessages     Message[] @relation("SentMessages")
-  receivedMessages Message[] @relation("ReceivedMessages")
 }
 
 model Post {
-  id        Int       @id @default(autoincrement())
+  id        String   @id @default(cuid())
   title     String
   content   String
-  approved  Boolean   @default(false)
-  createdAt DateTime  @default(now())
-  author    User      @relation(fields: [authorId], references: [id])
-  authorId  Int
-  category  Category? @relation(fields: [categoryId], references: [id])
-  categoryId Int?
+  imageUrl  String?
+  status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Category {
@@ -41,9 +43,9 @@ model Message {
   id        Int      @id @default(autoincrement())
   content   String
   sender    User     @relation("SentMessages", fields: [senderId], references: [id])
-  senderId  Int
+  senderId  String
   receiver  User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
-  receiverId Int
+  receiverId String
   createdAt DateTime @default(now())
 }
 
