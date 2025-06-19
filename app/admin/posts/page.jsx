@@ -56,6 +56,29 @@ export default function Posts() {
         }
     };
 
+    const handleDeletePost = async (postId) => {
+        if (!confirm('Bu blog yazısını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.')) {
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/admin/post', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ postId }),
+            });
+
+            if (!response.ok) throw new Error('Blog silinemedi');
+            
+            // Blog listesini yenile
+            fetchPosts();
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
     if (loading) return <div className="p-4">Yükleniyor...</div>;
     if (error) return <div className="p-4 text-red-500">Hata: {error}</div>;
 
@@ -131,6 +154,12 @@ export default function Posts() {
                                         className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm"
                                     >
                                         Görüntüle
+                                    </button>
+                                    <button
+                                        onClick={() => handleDeletePost(post.id)}
+                                        className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600 text-sm"
+                                    >
+                                        Sil
                                     </button>
                                 </td>
                             </tr>

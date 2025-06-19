@@ -207,9 +207,6 @@ export default function AdminCategories() {
                                 Kategori Adı
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Blog Sayısı
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Oluşturulma Tarihi
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -220,7 +217,7 @@ export default function AdminCategories() {
                     <tbody className="bg-white divide-y divide-gray-200">
                         {categories.length === 0 ? (
                             <tr>
-                                <td colSpan="4" className="px-6 py-4 text-center text-gray-500">
+                                <td colSpan="3" className="px-6 py-4 text-center text-gray-500">
                                     Henüz kategori bulunmuyor
                                 </td>
                             </tr>
@@ -229,9 +226,6 @@ export default function AdminCategories() {
                                 <tr key={category.id}>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                         {category.name}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {category._count.posts} blog
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                         {new Date(category.createdAt).toLocaleDateString('tr-TR')}

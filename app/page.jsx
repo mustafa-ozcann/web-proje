@@ -264,11 +264,6 @@ export default function Home() {
                                             <div className={`w-2 h-2 rounded-full ${!categoryId ? 'bg-white' : 'bg-blue-400'}`}></div>
                                             <span className="font-medium">Tüm Yazılar</span>
                                         </div>
-                                        <span className={`text-sm px-2 py-1 rounded-full ${
-                                            !categoryId ? 'bg-white/20' : 'bg-gray-100 text-gray-600'
-                                        }`}>
-                                            {categories.reduce((acc, cat) => acc + cat._count.posts, 0)}
-                                        </span>
                                     </Link>
                                     
                                     {categories.map((category) => (
@@ -287,11 +282,6 @@ export default function Home() {
                                                 }`}></div>
                                                 <span className="font-medium">{category.name}</span>
                                             </div>
-                                            <span className={`text-sm px-2 py-1 rounded-full ${
-                                                categoryId === category.id ? 'bg-white/20' : 'bg-gray-100 text-gray-600'
-                                            }`}>
-                                                {category._count.posts}
-                                            </span>
                                         </Link>
                                     ))}
                                 </div>

@@ -106,3 +106,81 @@ export async function PUT(request) {
         return NextResponse.json({ error: 'Blog yazısı güncellenirken bir hata oluştu' }, { status: 500 });
     }
 }
+
+// Blog onayı hatası
+export async function POST(request) {
+    try {
+        const session = await getServerSession(authOptions);
+        
+        // Admin kontrolü
+        if (!session || session.user.role !== 'ADMIN') {
+            return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 401 });
+        }
+
+        const { postId, status } = await request.json();
+
+        if (!postId || !status) {
+            return NextResponse.json({ error: 'Eksik parametreler' }, { status: 400 });
+        }
+
+        if (!['APPROVED', 'REJECTED'].includes(status)) {
+            return NextResponse.json({ error: 'Geçersiz durum' }, { status: 400 });
+        }
+
+        const updatedPost = await prisma.post.update({
+            where: { id: postId },
+            data: { status },
+            include: {
+                author: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true
+                    }
+                }
+            }
+        });
+
+        return NextResponse.json(updatedPost);
+    } catch (error) {
+        console.error('Blog onayı hatası:', error);
+        return NextResponse.json({ error: 'Bir hata oluştu' }, { status: 500 });
+    }
+}
+
+// Blog yazısını sil
+export async function DELETE(request) {
+    try {
+        const session = await getServerSession(authOptions);
+        
+        // Admin kontrolü
+        if (!session || session.user.role !== 'ADMIN') {
+            return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 401 });
+        }
+
+        const { postId } = await request.json();
+
+        if (!postId) {
+            return NextResponse.json({ error: 'Blog ID gerekli' }, { status: 400 });
+        }
+
+        // Blog yazısının var olup olmadığını kontrol et
+        const existingPost = await prisma.post.findUnique({
+            where: { id: postId }
+        });
+
+        if (!existingPost) {
+            return NextResponse.json({ error: 'Blog yazısı bulunamadı' }, { status: 404 });
+        }
+
+        // Blog yazısını sil
+        await prisma.post.delete({
+            where: { id: postId }
+        });
+
+        return NextResponse.json({ message: 'Blog yazısı başarıyla silindi' });
+    } catch (error) {
+        console.error('Blog silme hatası:', error);
+        return NextResponse.json({ error: 'Blog silinirken bir hata oluştu' }, { status: 500 });
+    }
+}
