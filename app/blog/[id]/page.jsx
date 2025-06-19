@@ -137,28 +137,48 @@ export default function BlogDetail() {
     const postCount = author._count?.posts || 0;
 
     return (
-        <div className="max-w-6xl mx-auto p-6">
-            <div className="flex gap-8">
-                {/* Ana içerik - Sol taraf */}
-                <div className="flex-1">
-                    {post.imageUrl && (
-                        <img
-                            src={post.imageUrl}
-                            alt={post.title}
-                            className="w-full h-64 object-cover rounded-lg mb-8"
-                        />
-                    )}
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+            <div className="max-w-6xl mx-auto p-6">
+                <div className="flex gap-8">
+                    {/* Ana içerik - Sol taraf */}
+                    <div className="flex-1">
+                        <article className="bg-white rounded-2xl shadow-lg overflow-hidden">
+                            {post.imageUrl ? (
+                                <img
+                                    src={post.imageUrl}
+                                    alt={post.title}
+                                    className="w-full h-80 object-cover"
+                                />
+                            ) : (
+                                <div className="h-80 bg-gradient-to-br from-blue-400 via-purple-500 to-indigo-600 flex items-center justify-center">
+                                    <div className="text-white text-center p-6">
+                                        <svg className="w-20 h-20 mx-auto mb-4 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                        <p className="font-semibold opacity-90 text-xl">Blog Yazısı</p>
+                                    </div>
+                                </div>
+                            )}
 
-                    <h1 className="text-4xl font-bold mb-8">{post.title}</h1>
+                            <div className="p-8">
+                                {post.category && (
+                                    <span className="inline-block bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 text-sm px-3 py-1 rounded-full mb-4 font-medium">
+                                        {post.category.name}
+                                    </span>
+                                )}
 
-                    <div className="prose max-w-none">
-                        {post.content.split('\n').map((paragraph, index) => (
-                            <p key={index} className="mb-4">
-                                {paragraph}
-                            </p>
-                        ))}
+                                <h1 className="text-4xl font-bold mb-8 text-gray-800">{post.title}</h1>
+
+                                <div className="prose max-w-none text-gray-700 leading-relaxed">
+                                    {post.content.split('\n').map((paragraph, index) => (
+                                        <p key={index} className="mb-6 text-lg">
+                                            {paragraph}
+                                        </p>
+                                    ))}
+                                </div>
+                            </div>
+                        </article>
                     </div>
-                </div>
 
                 {/* Yazar bilgileri - Sağ taraf */}
                 <div className="w-80">
@@ -253,6 +273,7 @@ export default function BlogDetail() {
                             </div>
                         )}
                     </div>
+                </div>
                 </div>
             </div>
         </div>

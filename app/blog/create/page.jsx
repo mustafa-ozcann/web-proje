@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import Toast from '../../../components/Toast';
 
 export default function CreateBlog() {
     const router = useRouter();
@@ -16,6 +17,9 @@ export default function CreateBlog() {
     const [categories, setCategories] = useState([]);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const [toastType, setToastType] = useState('success');
 
     useEffect(() => {
         if (status === 'unauthenticated') {
@@ -67,8 +71,23 @@ export default function CreateBlog() {
                 throw new Error(data.error || 'Blog oluşturulurken bir hata oluştu');
             }
 
-            router.push('/');
-            router.refresh();
+            // Başarı bildirimi göster
+            setToastMessage('Blog yazınız incelemeye alındı! Admin onayından sonra yayınlanacaktır.');
+            setToastType('success');
+            setShowToast(true);
+
+            // Form'u sıfırla
+            setFormData({
+                title: '',
+                content: '',
+                imageUrl: '',
+                categoryId: '',
+            });
+
+            // 3 saniye sonra ana sayfaya yönlendir
+            setTimeout(() => {
+                router.push('/');
+            }, 3000);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -85,14 +104,16 @@ export default function CreateBlog() {
     };
 
     return (
-        <div className="max-w-4xl mx-auto p-6">
-            <h1 className="text-3xl font-bold mb-8">Yeni Blog Yazısı</h1>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+            <div className="max-w-4xl mx-auto p-6">
+                <div className="bg-white rounded-2xl shadow-lg p-8">
+                    <h1 className="text-3xl font-bold mb-8 text-gray-800">Yeni Blog Yazısı</h1>
 
-            {error && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                    {error}
-                </div>
-            )}
+                    {error && (
+                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                            {error}
+                        </div>
+                    )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
@@ -159,14 +180,24 @@ export default function CreateBlog() {
                     />
                 </div>
 
-                <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
-                >
-                    {loading ? 'Gönderiliyor...' : 'Blog Yazısını Oluştur'}
-                </button>
-            </form>
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-lg hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 font-semibold transition-all duration-300"
+                    >
+                        {loading ? 'Gönderiliyor...' : 'Blog Yazısını Oluştur'}
+                    </button>
+                </form>
+                </div>
+            </div>
+            
+            <Toast
+                message={toastMessage}
+                type={toastType}
+                isVisible={showToast}
+                onHide={() => setShowToast(false)}
+                duration={3000}
+            />
         </div>
     );
 }

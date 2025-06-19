@@ -8,7 +8,7 @@ export default function Posts() {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [status, setStatus] = useState('PENDING');
+    const [status, setStatus] = useState('ALL');
     const [page, setPage] = useState(1);
     const [pagination, setPagination] = useState(null);
     const { data: session } = useSession();
@@ -71,6 +71,7 @@ export default function Posts() {
                     }}
                     className="border rounded-lg px-4 py-2 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
+                    <option value="ALL">Tümü</option>
                     <option value="PENDING">Bekleyenler</option>
                     <option value="APPROVED">Onaylananlar</option>
                     <option value="REJECTED">Reddedilenler</option>

@@ -141,18 +141,22 @@ export default function Messages() {
     }
 
     return (
-        <div className="max-w-6xl mx-auto p-6">
-            <h1 className="text-2xl font-bold mb-6">Mesajlar</h1>
-
-            {error && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                    {error}
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+            <div className="max-w-6xl mx-auto p-6">
+                <div className="text-center mb-8">
+                    <h1 className="text-4xl font-bold text-gray-800 mb-2">Mesajlar</h1>
+                    <p className="text-gray-600">Diğer kullanıcılarla sohbet edin</p>
                 </div>
-            )}
 
-            <div className="flex gap-6 h-[calc(100vh-200px)]">
-                {/* Sol Taraf - Konuşmalar Listesi */}
-                <div className="w-1/3 bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
+                {error && (
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+                        {error}
+                    </div>
+                )}
+
+                <div className="flex gap-6 h-[calc(100vh-250px)]">
+                    {/* Sol Taraf - Konuşmalar Listesi */}
+                    <div className="w-1/3 bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col">
                     <div className="p-4 border-b relative">
                         <h2 className="text-lg font-semibold">Konuşmalar</h2>
                         <div className="mt-2">
@@ -328,6 +332,7 @@ export default function Messages() {
                         </div>
                     )}
                 </div>
+            </div>
             </div>
         </div>
     );
