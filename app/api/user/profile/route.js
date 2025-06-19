@@ -1,47 +1,51 @@
-import { PrismaClient } from '@prisma/client';
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { options } from '@/app/api/auth/[...nextauth]/options';
 import bcryptjs from 'bcryptjs';
-
-// Prisma istemcisini global olarak oluştur
-const globalForPrisma = globalThis;
-const prisma = globalForPrisma.prisma || new PrismaClient();
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+import prisma from '../../../../lib/prisma';
 
 // Kullanıcı bilgilerini getir
 export async function GET(request) {
     try {
-        const session = await getServerSession(options);
+        const { searchParams } = new URL(request.url);
+        const userId = searchParams.get('id');
 
-        if (!session) {
-            return NextResponse.json({ error: 'Oturum açmanız gerekiyor' }, { status: 401 });
+        if (!userId) {
+            return NextResponse.json({ error: 'Kullanıcı ID gerekli' }, { status: 400 });
         }
 
         const user = await prisma.user.findUnique({
-            where: { id: session.user.id },
+            where: {
+                id: userId,
+            },
             select: {
                 id: true,
                 name: true,
                 email: true,
                 bio: true,
+                createdAt: true,
+                updatedAt: true,
                 role: true,
-                _count: {
-                    select: {
-                        posts: true
-                    }
-                }
-            }
+            },
         });
 
         if (!user) {
             return NextResponse.json({ error: 'Kullanıcı bulunamadı' }, { status: 404 });
         }
 
-        return NextResponse.json(user);
+        return NextResponse.json({
+            user,
+            success: true,
+        });
     } catch (error) {
-        console.error('Profil bilgileri getirme hatası:', error);
-        return NextResponse.json({ error: 'Profil bilgileri alınırken bir hata oluştu' }, { status: 500 });
+        console.error('User profile API Error:', error);
+        return NextResponse.json(
+            { 
+                error: error.message, 
+                success: false 
+            },
+            { status: 500 }
+        );
     }
 }
 

@@ -1,6 +1,6 @@
 import { Inter } from 'next/font/google';
 import './globals.css';
-import Header from '@/components/header';
+import ClientHeaderWrapper from '@/components/ClientHeaderWrapper';
 import AuthProvider from '@/components/AuthProvider';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
     <html lang="tr" suppressHydrationWarning>
       <body className={inter.className}>
         <AuthProvider>
-          <Header />
+          <ClientHeaderWrapper />
           {children}
         </AuthProvider>
       </body>

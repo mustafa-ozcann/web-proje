@@ -2,12 +2,13 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 export default function Messages() {
     const { data: session } = useSession();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [conversations, setConversations] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [messages, setMessages] = useState([]);
@@ -16,7 +17,9 @@ export default function Messages() {
     const [error, setError] = useState('');
     const [sending, setSending] = useState(false);
     const messagesEndRef = useRef(null);
+    const [searchResults, setSearchResults] = useState([]);
 
+    // URL'den userId parametresini kontrol et
     useEffect(() => {
         if (!session) {
             router.push('/login');
@@ -24,7 +27,13 @@ export default function Messages() {
         }
 
         fetchConversations();
-    }, [session]);
+        
+        // URL'de userId varsa o kullanıcıyı getir ve seç
+        const userId = searchParams.get('userId');
+        if (userId) {
+            fetchUserById(userId);
+        }
+    }, [session, searchParams]);
 
     useEffect(() => {
         if (selectedUser) {
@@ -69,6 +78,19 @@ export default function Messages() {
             setMessages(data.messages);
         } catch (err) {
             setError(err.message);
+        }
+    };
+
+    const fetchUserById = async (userId) => {
+        try {
+            const response = await fetch(`/api/user/profile?id=${userId}`);
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                setSelectedUser(data.user);
+            }
+        } catch (err) {
+            console.error('Kullanıcı bilgileri alınamadı:', err);
         }
     };
 
@@ -131,8 +153,65 @@ export default function Messages() {
             <div className="flex gap-6 h-[calc(100vh-200px)]">
                 {/* Sol Taraf - Konuşmalar Listesi */}
                 <div className="w-1/3 bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
-                    <div className="p-4 border-b">
+                    <div className="p-4 border-b relative">
                         <h2 className="text-lg font-semibold">Konuşmalar</h2>
+                        <div className="mt-2">
+                            <input
+                                type="text"
+                                placeholder="Kullanıcı ara..."
+                                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                onChange={async (e) => {
+                                    const searchTerm = e.target.value.trim();
+                                    if (searchTerm && searchTerm.length >= 2) {
+                                        try {
+                                            const res = await fetch(`/api/user/search?q=${encodeURIComponent(searchTerm)}`);
+                                            const data = await res.json();
+                                            console.log('Kullanıcı arama API response:', data);
+                                            
+                                            if (res.ok && data.success && data.users && Array.isArray(data.users)) {
+                                                // conversations dizisindeki user id'leri ile eşleşenleri çıkar
+                                                const filteredUsers = data.users.filter(user =>
+                                                    !conversations.some(conv => conv.user.id === user.id)
+                                                );
+                                                setSearchResults(filteredUsers);
+                                            } else {
+                                                console.error('Arama sonucu geçersiz:', data);
+                                                setSearchResults([]);
+                                            }
+                                        } catch (error) {
+                                            console.error('Kullanıcı arama hatası:', error);
+                                            setSearchResults([]);
+                                        }
+                                    } else {
+                                        setSearchResults([]);
+                                    }
+                                }}
+                            />
+                            {searchResults && searchResults.length > 0 && (
+                                <div className="absolute left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-10 max-h-48 overflow-y-auto">
+                                    {searchResults.map(user => (
+                                        <button
+                                            key={user.id}
+                                            className="w-full p-2 text-left hover:bg-gray-50 flex items-center space-x-3"
+                                            onClick={() => {
+                                                setSelectedUser(user);
+                                                setSearchResults([]);
+                                            }}
+                                        >
+                                            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
+                                                {(user.name || user.email || 'U').charAt(0).toUpperCase()}
+                                            </div>
+                                            <div>
+                                                <span className="font-medium">{user.name || 'İsimsiz Kullanıcı'}</span>
+                                                {user.email && (
+                                                    <div className="text-xs text-gray-500">{user.email}</div>
+                                                )}
+                                            </div>
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     </div>
                     <div className="flex-1 overflow-y-auto">
                         {conversations.length === 0 ? (
@@ -150,12 +229,12 @@ export default function Messages() {
                                         }`}
                                     >
                                         <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
-                                            {conv.user.name.charAt(0)}
+                                            {(conv.user.name || conv.user.email || 'U').charAt(0).toUpperCase()}
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex justify-between items-baseline">
                                                 <h3 className="text-sm font-medium truncate">
-                                                    {conv.user.name}
+                                                    {conv.user.name || 'İsimsiz Kullanıcı'}
                                                 </h3>
                                                 {conv.lastMessage && (
                                                     <span className="text-xs text-gray-500">
@@ -183,10 +262,10 @@ export default function Messages() {
                             {/* Mesajlaşma Başlığı */}
                             <div className="p-4 border-b flex items-center space-x-3">
                                 <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
-                                    {selectedUser.name.charAt(0)}
+                                    {(selectedUser.name || selectedUser.email || 'U').charAt(0).toUpperCase()}
                                 </div>
                                 <div>
-                                    <h2 className="font-semibold">{selectedUser.name}</h2>
+                                    <h2 className="font-semibold">{selectedUser.name || 'İsimsiz Kullanıcı'}</h2>
                                     <Link
                                         href={`/profile/${selectedUser.id}`}
                                         className="text-sm text-blue-500 hover:text-blue-600"

@@ -90,10 +90,11 @@ export async function GET(request) {
         // Konuşmaları birleştir ve düzenle
         const conversationMap = new Map();
 
-        // Gönderilen mesajlardan konuşmaları oluştur
+        // Gönderilen mesajlardan konuşmaları oluştur/güncelle
         sentMessages.forEach(message => {
             const userId = message.recipientId;
-            if (!conversationMap.has(userId)) {
+            const existing = conversationMap.get(userId);
+            if (!existing || existing.lastMessage.createdAt < message.createdAt) {
                 conversationMap.set(userId, {
                     user: message.recipient,
                     lastMessage: message
@@ -101,7 +102,7 @@ export async function GET(request) {
             }
         });
 
-        // Alınan mesajlardan konuşmaları oluştur
+        // Alınan mesajlardan konuşmaları oluştur/güncelle
         receivedMessages.forEach(message => {
             const userId = message.senderId;
             const existing = conversationMap.get(userId);

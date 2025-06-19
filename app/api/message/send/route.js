@@ -1,12 +1,7 @@
-import { PrismaClient } from '@prisma/client';
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { options } from '@/app/api/auth/[...nextauth]/options';
-
-// Prisma istemcisini global olarak oluştur
-const globalForPrisma = globalThis;
-const prisma = globalForPrisma.prisma || new PrismaClient();
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+import prisma from '../../../../lib/prisma';
 
 export async function POST(request) {
     try {
@@ -18,8 +13,24 @@ export async function POST(request) {
 
         const { recipientId, content } = await request.json();
 
+        console.log('Mesaj gönderme isteği:', {
+            senderId: session.user.id,
+            recipientId,
+            content: content?.substring(0, 50) + '...'
+        });
+
         if (!recipientId || !content) {
             return NextResponse.json({ error: 'Eksik parametreler' }, { status: 400 });
+        }
+
+        // Gönderici kullanıcısının var olduğunu kontrol et
+        const sender = await prisma.user.findUnique({
+            where: { id: session.user.id }
+        });
+
+        if (!sender) {
+            console.error('Gönderici bulunamadı:', session.user.id);
+            return NextResponse.json({ error: 'Gönderici kullanıcı bulunamadı' }, { status: 404 });
         }
 
         // Alıcının var olduğunu kontrol et
@@ -28,6 +39,7 @@ export async function POST(request) {
         });
 
         if (!recipient) {
+            console.error('Alıcı bulunamadı:', recipientId);
             return NextResponse.json({ error: 'Alıcı bulunamadı' }, { status: 404 });
         }
 
@@ -35,6 +47,8 @@ export async function POST(request) {
         if (recipientId === session.user.id) {
             return NextResponse.json({ error: 'Kendinize mesaj gönderemezsiniz' }, { status: 400 });
         }
+
+        console.log('Kullanıcılar doğrulandı, mesaj oluşturuluyor...');
 
         // Mesajı oluştur
         const message = await prisma.message.create({
@@ -53,9 +67,16 @@ export async function POST(request) {
             }
         });
 
+        console.log('Mesaj başarıyla oluşturuldu:', message.id);
+
         return NextResponse.json({ message });
     } catch (error) {
         console.error('Mesaj gönderme hatası:', error);
-        return NextResponse.json({ error: 'Mesaj gönderilemedi' }, { status: 500 });
+        console.error('Hata detayları:', {
+            code: error.code,
+            meta: error.meta,
+            message: error.message
+        });
+        return NextResponse.json({ error: 'Mesaj gönderilemedi: ' + error.message }, { status: 500 });
     }
 }

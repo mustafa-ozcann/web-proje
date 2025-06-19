@@ -1,9 +1,7 @@
-import { PrismaClient } from '@prisma/client';
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { options } from '../../auth/[...nextauth]/options';
-
-const prisma = new PrismaClient();
+import prisma from '../../../../lib/prisma';
 
 // Bekleyen blog yazılarını getir
 export async function GET(request) {
