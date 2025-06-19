@@ -10,10 +10,38 @@ export async function GET(request) {
         const { searchParams } = new URL(request.url);
         const userId = searchParams.get('id');
 
+        // Eğer ID parametresi yoksa, session'dan kendi ID'yi al
         if (!userId) {
-            return NextResponse.json({ error: 'Kullanıcı ID gerekli' }, { status: 400 });
+            const session = await getServerSession(options);
+            
+            if (!session) {
+                return NextResponse.json({ error: 'Oturum açmanız gerekiyor' }, { status: 401 });
+            }
+
+            // Kendi profil bilgilerini getir
+            const user = await prisma.user.findUnique({
+                where: {
+                    id: session.user.id,
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    bio: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    role: true,
+                },
+            });
+
+            if (!user) {
+                return NextResponse.json({ error: 'Kullanıcı bulunamadı' }, { status: 404 });
+            }
+
+            return NextResponse.json(user);
         }
 
+        // ID parametresi varsa, o kullanıcının profil bilgilerini getir (herkese açık)
         const user = await prisma.user.findUnique({
             where: {
                 id: userId,
