@@ -56,9 +56,10 @@ export default function Users() {
             
             // Kullanıcı listesini yenile
             await fetchUsers();
-            
-            // Oturumu güncelle (eğer başka bir kullanıcının rolü değiştiyse ve o kullanıcı aktif ise)
-            await updateSession();
+
+            // Oturumu zorla güncelle
+            const event = new Event('visibilitychange');
+            document.dispatchEvent(event);
             
             // Sayfayı yenile
             router.refresh();

@@ -2,7 +2,10 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaClient } from '@prisma/client';
 import bcryptjs from 'bcryptjs';
 
-const prisma = new PrismaClient();
+// Prisma istemcisini global olarak oluştur
+const globalForPrisma = globalThis;
+const prisma = globalForPrisma.prisma || new PrismaClient();
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 
 export const options = {
     providers: [
@@ -62,8 +65,6 @@ export const options = {
                 } catch (error) {
                     console.error('Auth hatası:', error);
                     return null;
-                } finally {
-                    await prisma.$disconnect();
                 }
             }
         })
@@ -79,6 +80,29 @@ export const options = {
                 token.id = user.id;
                 token.role = user.role;
             }
+
+            // Sayfa görünür olduğunda kullanıcı bilgilerini güncelle
+            if (trigger === "visibilityChange") {
+                try {
+                    const updatedUser = await prisma.user.findUnique({
+                        where: { id: token.id },
+                        select: {
+                            id: true,
+                            email: true,
+                            name: true,
+                            role: true
+                        }
+                    });
+                    
+                    if (updatedUser) {
+                        console.log('Kullanıcı bilgileri güncellendi:', updatedUser);
+                        token.role = updatedUser.role;
+                    }
+                } catch (error) {
+                    console.error('Kullanıcı bilgileri güncellenirken hata:', error);
+                }
+            }
+
             return token;
         },
         async session({ session, token }) {
