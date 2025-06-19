@@ -48,6 +48,23 @@ async function main() {
         });
         console.log('Test kullanıcısı oluşturuldu:', { id: testUser.id, email: testUser.email });
 
+        // Kategorileri oluştur
+        console.log('Kategoriler oluşturuluyor...');
+        const categories = ['Teknoloji', 'Yazılım', 'Yapay Zeka', 'Web Geliştirme', 'Mobil Uygulama', 'Oyun', 'Eğitim'];
+        
+        for (const categoryName of categories) {
+            const existingCategory = await prisma.category.findUnique({
+                where: { name: categoryName }
+            });
+            
+            if (!existingCategory) {
+                await prisma.category.create({
+                    data: { name: categoryName }
+                });
+                console.log(`Kategori oluşturuldu: ${categoryName}`);
+            }
+        }
+
         // Oluşturulan kullanıcıları kontrol et
         const users = await prisma.user.findMany({
             select: {
@@ -58,6 +75,10 @@ async function main() {
             }
         });
         console.log('Mevcut kullanıcılar:', users);
+
+        // Oluşturulan kategorileri kontrol et
+        const createdCategories = await prisma.category.findMany();
+        console.log('Mevcut kategoriler:', createdCategories);
 
         console.log('Seed tamamlandı!');
     } catch (error) {

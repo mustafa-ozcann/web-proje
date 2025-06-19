@@ -16,21 +16,7 @@ export default function Sidebar() {
             <h2 className="text-2xl font-bold mb-8 text-blue-400">Admin Panel</h2>
             <nav>
                 <ul className="space-y-4">
-                    <li>
-                        <Link 
-                            href="/admin" 
-                            className={`flex items-center space-x-2 p-2 rounded-lg transition-colors ${
-                                isActive('/admin') 
-                                    ? 'bg-blue-600 text-white' 
-                                    : 'hover:bg-gray-800'
-                            }`}
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-                            </svg>
-                            <span>Ana Sayfa</span>
-                        </Link>
-                    </li>
+
                     <li>
                         <Link 
                             href="/admin/users" 
@@ -59,6 +45,21 @@ export default function Sidebar() {
                                 <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
                             </svg>
                             <span>Blog Onayı</span>
+                        </Link>
+                    </li>
+                    <li>
+                        <Link 
+                            href="/admin/categories" 
+                            className={`flex items-center space-x-2 p-2 rounded-lg transition-colors ${
+                                isActive('/admin/categories') 
+                                    ? 'bg-blue-600 text-white' 
+                                    : 'hover:bg-gray-800'
+                            }`}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
+                            </svg>
+                            <span>Kategoriler</span>
                         </Link>
                     </li>
                     <li className="pt-6">

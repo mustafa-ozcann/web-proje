@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { options } from '@/app/api/auth/[...nextauth]/options';
+import { authOptions } from '@/app/api/auth/config';
 import prisma from '../../../../lib/prisma';
 
 export async function POST(request) {
     try {
-        const session = await getServerSession(options);
+        const session = await getServerSession(authOptions);
 
         if (!session) {
             return NextResponse.json({ error: 'Oturum açmanız gerekiyor' }, { status: 401 });
@@ -30,7 +30,10 @@ export async function POST(request) {
 
         if (!sender) {
             console.error('Gönderici bulunamadı:', session.user.id);
-            return NextResponse.json({ error: 'Gönderici kullanıcı bulunamadı' }, { status: 404 });
+            return NextResponse.json({ 
+                error: 'Oturum bilgileriniz güncel değil. Lütfen çıkış yapıp tekrar giriş yapın.',
+                needRelogin: true 
+            }, { status: 404 });
         }
 
         // Alıcının var olduğunu kontrol et

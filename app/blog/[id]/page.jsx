@@ -16,6 +16,7 @@ export default function BlogDetail() {
     const [message, setMessage] = useState('');
     const [sendingMessage, setSendingMessage] = useState(false);
     const [messageError, setMessageError] = useState('');
+    const [needRelogin, setNeedRelogin] = useState(false);
     const [messageSent, setMessageSent] = useState(false);
 
     useEffect(() => {
@@ -54,6 +55,7 @@ export default function BlogDetail() {
         try {
             setSendingMessage(true);
             setMessageError('');
+            setNeedRelogin(false);
 
             const response = await fetch('/api/message/send', {
                 method: 'POST',
@@ -69,7 +71,14 @@ export default function BlogDetail() {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || 'Mesaj gönderilemedi');
+                // Özel hata handling'i
+                if (data.needRelogin) {
+                    setMessageError(data.error);
+                    setNeedRelogin(true);
+                } else {
+                    throw new Error(data.error || 'Mesaj gönderilemedi');
+                }
+                return;
             }
 
             setMessage('');
@@ -206,6 +215,14 @@ export default function BlogDetail() {
                                         {messageError && (
                                             <div className="text-red-500 text-sm">
                                                 {messageError}
+                                                {needRelogin && (
+                                                    <button 
+                                                        onClick={() => router.push('/login')}
+                                                        className="block mt-2 text-blue-500 underline text-sm hover:text-blue-700"
+                                                    >
+                                                        Tekrar Giriş Yap
+                                                    </button>
+                                                )}
                                             </div>
                                         )}
                                         <div className="flex gap-2">

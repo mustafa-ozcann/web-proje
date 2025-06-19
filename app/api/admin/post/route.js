@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { options } from '../../auth/[...nextauth]/options';
+import { authOptions } from '../../auth/config';
 import prisma from '../../../../lib/prisma';
 
 // Bekleyen blog yazılarını getir
 export async function GET(request) {
     try {
-        const session = await getServerSession(options);
+        const session = await getServerSession(authOptions);
         
         // Admin kontrolü
         if (!session || session.user.role !== 'ADMIN') {
@@ -64,7 +64,7 @@ export async function GET(request) {
 // Blog durumunu güncelle (onay/red)
 export async function PUT(request) {
     try {
-        const session = await getServerSession(options);
+        const session = await getServerSession(authOptions);
         
         // Admin kontrolü
         if (!session || session.user.role !== 'ADMIN') {

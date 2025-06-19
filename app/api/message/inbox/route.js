@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { options } from '@/app/api/auth/[...nextauth]/options';
+import { authOptions } from '@/app/api/auth/config';
 
 // Prisma istemcisini global olarak oluştur
 const globalForPrisma = globalThis;
@@ -10,7 +10,7 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 
 export async function GET(request) {
     try {
-        const session = await getServerSession(options);
+        const session = await getServerSession(authOptions);
 
         if (!session) {
             return NextResponse.json({ error: 'Oturum açmanız gerekiyor' }, { status: 401 });

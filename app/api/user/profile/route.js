@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { options } from '@/app/api/auth/[...nextauth]/options';
+import { authOptions } from '@/app/api/auth/config';
 import bcryptjs from 'bcryptjs';
 import prisma from '../../../../lib/prisma';
 
@@ -12,7 +12,7 @@ export async function GET(request) {
 
         // Eğer ID parametresi yoksa, session'dan kendi ID'yi al
         if (!userId) {
-            const session = await getServerSession(options);
+            const session = await getServerSession(authOptions);
             
             if (!session) {
                 return NextResponse.json({ error: 'Oturum açmanız gerekiyor' }, { status: 401 });
@@ -80,7 +80,7 @@ export async function GET(request) {
 // Kullanıcı bilgilerini güncelle
 export async function PUT(request) {
     try {
-        const session = await getServerSession(options);
+        const session = await getServerSession(authOptions);
 
         if (!session) {
             return NextResponse.json({ error: 'Oturum açmanız gerekiyor' }, { status: 401 });

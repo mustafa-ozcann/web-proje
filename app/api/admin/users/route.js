@@ -1,14 +1,14 @@
 import { PrismaClient } from '@prisma/client';
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { options } from '../../auth/[...nextauth]/options';
+import { authOptions } from '../../auth/config';
 
 const prisma = new PrismaClient();
 
 // Tüm kullanıcıları getir
 export async function GET(request) {
     try {
-        const session = await getServerSession(options);
+        const session = await getServerSession(authOptions);
         
         // Admin kontrolü
         if (!session || session.user.role !== 'ADMIN') {
@@ -43,7 +43,7 @@ export async function GET(request) {
 // Kullanıcı rolünü güncelle
 export async function PUT(request) {
     try {
-        const session = await getServerSession(options);
+        const session = await getServerSession(authOptions);
         
         // Admin kontrolü
         if (!session || session.user.role !== 'ADMIN') {
@@ -82,7 +82,7 @@ export async function PUT(request) {
 // Kullanıcı silme
 export async function DELETE(request) {
     try {
-        const session = await getServerSession(options);
+        const session = await getServerSession(authOptions);
         
         // Admin kontrolü
         if (!session || session.user.role !== 'ADMIN') {
