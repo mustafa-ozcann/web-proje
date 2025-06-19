@@ -1,18 +1,18 @@
 import { PrismaClient } from '@prisma/client';
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { getServerSession } from 'next-auth';
+import { options } from '../../auth/[...nextauth]/options';
 
 const prisma = new PrismaClient();
 
 export async function POST(request) {
     try {
-        // Kullanıcı kontrolü
-        const userCookie = cookies().get('user');
-        if (!userCookie) {
+        const session = await getServerSession(options);
+        
+        if (!session) {
             return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 401 });
         }
 
-        const user = JSON.parse(userCookie.value);
         const body = await request.json();
         const { title, content, imageUrl } = body;
 
@@ -25,7 +25,7 @@ export async function POST(request) {
                 title,
                 content,
                 imageUrl,
-                authorId: user.id,
+                authorId: session.user.id,
                 status: 'PENDING', // PENDING, APPROVED, REJECTED
             },
         });
@@ -36,6 +36,6 @@ export async function POST(request) {
         });
     } catch (error) {
         console.error('Blog oluşturma hatası:', error);
-        return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
+        return NextResponse.json({ error: 'Blog oluşturulurken bir hata oluştu' }, { status: 500 });
     }
 }

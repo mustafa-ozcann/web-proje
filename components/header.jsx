@@ -2,51 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useSession, signOut } from 'next-auth/react';
 
 export default function Header() {
-    const [user, setUser] = useState(null);
+    const { data: session } = useSession();
     const pathname = usePathname();
     const router = useRouter();
 
-    useEffect(() => {
-        const getUserFromCookie = () => {
-            try {
-                const cookies = document.cookie.split(';');
-                const userCookie = cookies.find(cookie => cookie.trim().startsWith('user='));
-
-                if (userCookie) {
-                    // URL-encoded değeri decode et
-                    const encodedValue = userCookie.split('=')[1];
-                    if (encodedValue) {
-                        const decodedValue = decodeURIComponent(encodedValue);
-                        const userData = JSON.parse(decodedValue);
-                        setUser(userData);
-                    } else {
-                        setUser(null);
-                    }
-                } else {
-                    setUser(null);
-                }
-            } catch (error) {
-                console.error('Error parsing user cookie:', error);
-                setUser(null);
-            }
-        };
-
-        getUserFromCookie();
-
-        // Cookie değişikliklerini dinle
-        const checkCookieInterval = setInterval(getUserFromCookie, 1000);
-
-        return () => clearInterval(checkCookieInterval);
-    }, []);
-
-    const handleLogout = () => {
-        document.cookie = 'user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        setUser(null);
-        router.push('/');
-    };
+    const isAdmin = session?.user?.role?.toLowerCase() === 'admin';
 
     return (
         <header className="bg-white shadow-sm">
@@ -59,35 +22,52 @@ export default function Header() {
 
                     {/* Navigation */}
                     <nav className="flex items-center space-x-4">
-                        {user ? (
+                        {session ? (
                             <>
-                                {user.role === 'admin' ? (
+                                <Link
+                                    href="/dashboard"
+                                    className={`text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium ${
+                                        pathname === '/dashboard' ? 'text-indigo-600' : ''
+                                    }`}
+                                >
+                                    Dashboard
+                                </Link>
+
+                                {isAdmin && (
                                     <Link
                                         href="/admin"
-                                        className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
+                                        className={`text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium ${
+                                            pathname.startsWith('/admin') ? 'text-indigo-600' : ''
+                                        }`}
                                     >
                                         Admin Panel
                                     </Link>
-                                ) : (
-                                    <Link
-                                        href="/dashboard"
-                                        className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
-                                    >
-                                        Dashboard
-                                    </Link>
                                 )}
-                                <button
-                                    onClick={handleLogout}
-                                    className="bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-700"
-                                >
-                                    Çıkış Yap
-                                </button>
+
+                                <div className="flex items-center space-x-4">
+                                    <span className="text-sm text-gray-600">
+                                        {session.user.name}
+                                        {isAdmin && (
+                                            <span className="ml-2 px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">
+                                                Admin
+                                            </span>
+                                        )}
+                                    </span>
+                                    <button
+                                        onClick={() => signOut({ callbackUrl: '/' })}
+                                        className="bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-700"
+                                    >
+                                        Çıkış Yap
+                                    </button>
+                                </div>
                             </>
                         ) : (
                             <>
                                 <Link
                                     href="/login"
-                                    className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
+                                    className={`text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium ${
+                                        pathname === '/login' ? 'text-indigo-600' : ''
+                                    }`}
                                 >
                                     Giriş Yap
                                 </Link>

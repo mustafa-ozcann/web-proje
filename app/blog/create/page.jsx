@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 export default function CreateBlog() {
     const router = useRouter();
+    const { data: session, status } = useSession();
     const [formData, setFormData] = useState({
         title: '',
         content: '',
@@ -12,6 +14,20 @@ export default function CreateBlog() {
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (status === 'unauthenticated') {
+            router.push('/login');
+        }
+    }, [status, router]);
+
+    if (status === 'loading') {
+        return <div className="max-w-4xl mx-auto p-6">Yükleniyor...</div>;
+    }
+
+    if (!session) {
+        return null;
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
