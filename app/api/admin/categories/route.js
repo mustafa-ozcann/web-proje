@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../../auth/config';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { options as authOptions } from '../../auth/[...nextauth]/options';
+import prisma from '../../../../lib/prisma';
 
 // Kategorileri listele
 export async function GET() {

@@ -1,11 +1,6 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { PrismaClient } from '@prisma/client';
 import bcryptjs from 'bcryptjs';
-
-// Prisma istemcisini global olarak oluştur
-const globalForPrisma = globalThis;
-const prisma = globalForPrisma.prisma || new PrismaClient();
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+import prisma from '../../../../lib/prisma';
 
 export const options = {
     providers: [

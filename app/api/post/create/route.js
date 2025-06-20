@@ -1,9 +1,7 @@
-import { PrismaClient } from '@prisma/client';
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../../auth/config';
-
-const prisma = new PrismaClient();
+import { options as authOptions } from '../../auth/[...nextauth]/options';
+import prisma from '../../../../lib/prisma';
 
 export async function POST(request) {
     try {
@@ -40,7 +38,5 @@ export async function POST(request) {
         return NextResponse.json({ 
             error: 'Blog oluşturulurken bir hata oluştu'
         }, { status: 500 });
-    } finally {
-        await prisma.$disconnect();
     }
 }
