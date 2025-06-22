@@ -76,14 +76,14 @@ export const options = {
     
     // Özel sayfa yönlendirmeleri
     pages: {
-        signIn: '/login', // Giriş sayfası yolu
+        signIn: '/', // Giriş sayfası yolu
         error: '/login', // Hata durumunda yönlendirilecek sayfa
     },
     
     // NextAuth callback'leri - lifecycle eventleri için
     callbacks: {
         /**
-         * JWT token oluşturulduğunda/güncellendiğinde çalışır
+         
          * @param {Object} param - Token, user ve diğer bilgiler
          * @returns {Object} - Güncellenmiş token
          */
