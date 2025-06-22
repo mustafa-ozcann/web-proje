@@ -1,8 +1,8 @@
-// app/api/user/login/route.js
-import bcryptjs from 'bcryptjs';
-import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import prisma from '../../../../lib/prisma';
+import bcryptjs from 'bcryptjs'; 
+import { NextResponse } from 'next/server'; 
+import { cookies } from 'next/headers'; 
+import prisma from '../../../../lib/prisma'; 
+
 
 export async function POST(request) {
     try {
@@ -16,20 +16,23 @@ export async function POST(request) {
             return NextResponse.json({ error: 'E-posta ve şifre zorunludur' }, { status: 400 });
         }
 
+        
         const user = await prisma.user.findUnique({ 
             where: { 
                 email: email.toLowerCase() 
             } 
         });
 
+        // Kullanıcı bulunamazsa hata döndür
         if (!user) {
             console.log('Kullanıcı bulunamadı:', email);
             return NextResponse.json({ error: 'Kullanıcı bulunamadı' }, { status: 404 });
         }
 
-        console.log('Kullanıcı bulundu, şifre kontrolü yapılıyor');
+        // Şifre kontrolü yap - girilen şifreyi veritabanındaki hash'lenmiş şifre ile karşılaştır
         const isValid = await bcryptjs.compare(password, user.password);
 
+        // Şifre yanlışsa hata döndür
         if (!isValid) {
             console.log('Şifre hatalı');
             return NextResponse.json({ error: 'Şifre hatalı' }, { status: 401 });
@@ -37,13 +40,14 @@ export async function POST(request) {
 
         console.log('Giriş başarılı:', user.id);
 
+        // Kullanıcı verilerini hazırla (hassas bilgileri çıkararak)
         const userData = {
             id: user.id,
             name: user.name,
             role: user.role,
         };
 
-        // Set the user cookie with proper encoding
+        // Başarılı giriş response'unu oluştur
         const response = NextResponse.json({
             message: 'Giriş başarılı',
             user: {
@@ -52,11 +56,13 @@ export async function POST(request) {
             },
         });
 
+        // Kullanıcı bilgilerini HTTP cookie'sine kaydet
+        // Bu cookie client-side'da kullanıcı durumunu kontrol etmek için kullanılabilir
         response.cookies.set('user', JSON.stringify(userData), {
-            path: '/',
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            httpOnly: true
+            path: '/', 
+            secure: process.env.NODE_ENV === 'production', 
+            sameSite: 'lax', 
+            httpOnly: true 
         });
 
         return response;

@@ -90,7 +90,7 @@ export default function Home() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
             {/* Hero Section */}
-            <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600">
+            <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 max-h-xl mx-auto">
                 <div className="absolute inset-0 bg-black/20"></div>
                 <div className="relative max-w-7xl mx-auto px-6 py-16">
                     <div className="text-center">

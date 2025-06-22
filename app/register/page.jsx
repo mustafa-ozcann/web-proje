@@ -1,4 +1,3 @@
-// app/register/page.jsx
 'use client';
 
 import { useState } from 'react';
@@ -6,7 +5,11 @@ import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
     const [form, setForm] = useState({ name: '', email: '', password: '' });
+    
+    // Hata mesajlarını göstermek için state
     const [error, setError] = useState('');
+    
+    // Sayfa yönlendirmeleri için router
     const router = useRouter();
 
     const handleChange = (e) => {
@@ -17,12 +20,14 @@ export default function RegisterPage() {
         e.preventDefault();
         setError('');
 
+        // Register API'sine POST isteği gönder
         const res = await fetch('/api/user/register', {
             method: 'POST',
-            body: JSON.stringify(form),
-            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(form), // Form verisini JSON'a çevir
+            headers: { 'Content-Type': 'application/json' }, // JSON content type belirt
         });
 
+        // Kayıt başarılıysa login sayfasına yönlendir
         if (res.ok) {
             router.push('/login');
         } else {

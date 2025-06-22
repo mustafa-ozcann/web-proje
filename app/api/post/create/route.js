@@ -14,8 +14,8 @@ export async function POST(request) {
         const body = await request.json();
         const { title, content, imageUrl, categoryId } = body;
 
-        if (!title || !content) {
-            return NextResponse.json({ error: 'Başlık ve içerik zorunludur' }, { status: 400 });
+        if (!title || !content || !categoryId) {
+            return NextResponse.json({ error: 'Başlık, içerik ve kategori zorunludur' }, { status: 400 });
         }
 
         const post = await prisma.post.create({
@@ -25,7 +25,7 @@ export async function POST(request) {
                 imageUrl: imageUrl || null,
                 authorId: session.user.id,
                 status: 'PENDING',
-                categoryId: categoryId || null,
+                categoryId: categoryId,
             },
         });
 

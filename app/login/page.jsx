@@ -6,8 +6,11 @@ import { signIn } from 'next-auth/react';
 
 export default function LoginPage() {
     const [form, setForm] = useState({ email: '', password: '' });
+    
     const [error, setError] = useState('');
+    
     const [loading, setLoading] = useState(false);
+    
     const router = useRouter();
 
     const handleChange = (e) =>
@@ -20,11 +23,13 @@ export default function LoginPage() {
 
         try {
             console.log('Giriş denemesi:', { email: form.email });
+            
+            // NextAuth'un signIn fonksiyonunu çağır
             const result = await signIn('credentials', {
-                email: form.email.toLowerCase(),
+                email: form.email.toLowerCase(), // Email'i normalize et
                 password: form.password,
-                redirect: false,
-                callbackUrl: '/dashboard'
+                redirect: false, 
+                callbackUrl: '/dashboard' 
             });
 
             console.log('Giriş sonucu:', result);
@@ -32,23 +37,23 @@ export default function LoginPage() {
             if (!result?.ok) {
                 setError(
                     result?.error === 'CredentialsSignin'
-                        ? 'Email veya şifre hatalı'
-                        : 'Giriş yapılırken bir hata oluştu'
+                        ? 'Email veya şifre hatalı' 
+                        : 'Giriş yapılırken bir hata oluştu' 
                 );
                 return;
             }
 
             if (result.url) {
-                router.push(result.url);
+                router.push(result.url); 
             } else {
-                router.push('/dashboard');
+                router.push('/dashboard'); 
             }
-            router.refresh();
+            router.refresh(); 
         } catch (err) {
             console.error('Login error:', err);
             setError('Bir hata oluştu, lütfen tekrar deneyin');
         } finally {
-            setLoading(false);
+            setLoading(false); 
         }
     };
 
@@ -60,6 +65,7 @@ export default function LoginPage() {
                         Hesabınıza Giriş Yapın
                     </h2>
                 </div>
+                
                 {error && (
                     <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
                         <div className="flex">
@@ -74,6 +80,7 @@ export default function LoginPage() {
                         </div>
                     </div>
                 )}
+                
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                     <div className="rounded-md shadow-sm -space-y-px">
                         <div>
@@ -90,6 +97,7 @@ export default function LoginPage() {
                                 placeholder="Email adresi"
                             />
                         </div>
+                        
                         <div>
                             <label htmlFor="password" className="sr-only">Şifre</label>
                             <input
@@ -109,13 +117,14 @@ export default function LoginPage() {
                     <div>
                         <button
                             type="submit"
-                            disabled={loading}
+                            disabled={loading} 
                             className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white ${
                                 loading 
-                                    ? 'bg-indigo-400 cursor-not-allowed' 
-                                    : 'bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                                    ? 'bg-indigo-400 cursor-not-allowed' // Loading durumu styling'i
+                                    : 'bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500' // Normal durum styling'i
                             }`}
                         >
+                            {/* Loading spinner (loading sırasında göster) */}
                             {loading ? (
                                 <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
