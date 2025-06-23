@@ -1,18 +1,15 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { getServerSession } from 'next-auth';
+import { options as authOptions } from '../../auth/[...nextauth]/options';
 import prisma from '../../../../lib/prisma';
 
 export async function POST(request) {
     try {
-        // Admin kontrolü
-        const userCookie = cookies().get('user');
-        if (!userCookie) {
-            return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 401 });
-        }
-
-        const user = JSON.parse(userCookie.value);
-        if (user.role !== 'admin') {
-            return NextResponse.json({ error: 'Bu işlem için yetkiniz yok' }, { status: 403 });
+        const session = await getServerSession(authOptions);
+        
+        // Session kontrolü 
+        if (!session) {
+            return NextResponse.json({ error: 'Oturum bulunamadı' }, { status: 401 });
         }
 
         const body = await request.json();

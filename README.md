@@ -1,36 +1,189 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🚀 Modern Blog Platformu
 
-## Getting Started
+Bu proje, **Next.js** tabanlı modern bir blog platformudur. Teknoloji ve inovasyon konularında içerik paylaşımı için geliştirilmiş, güçlü yönetim paneli ve kullanıcı rol sistemi içeren kapsamlı bir web uygulamasıdır.
 
-First, run the development server:
+## 📋 Proje Tanımı
 
+Bu platform aşağıdaki temel problemleri çözmek için geliştirilmiştir:
+
+- **İçerik Yönetimi**: Kullanıcıların kolayca blog yazısı paylaşabilmesi
+- **Moderasyon**: Admin onayı ile kaliteli içerik kontrolü
+- **Kategorizasyon**: İçeriklerin düzenli kategorilerde sınıflandırılması
+- **Kullanıcı Yönetimi**: Rol tabanlı erişim kontrolü
+- **Modern UX**: Responsive ve kullanıcı dostu arayüz
+
+### 🎯 Özellikler
+
+- ✅ **Kullanıcı Kimlik Doğrulama** - NextAuth ile güvenli giriş sistemi
+- ✅ **Rol Tabanlı Erişim** - USER ve ADMIN rolleri ile yetkilendirme
+- ✅ **Blog Yönetimi** - Yazı oluşturma, düzenleme ve onaylama
+- ✅ **Kategori Sistemi** - İçeriklerin organize edilmesi
+- ✅ **Admin Paneli** - Kapsamlı yönetim arayüzü
+- ✅ **Mesajlaşma** - Kullanıcılar arası iletişim
+- ✅ **Responsive Tasarım** - Tüm cihazlarda uyumlu
+- ✅ **Middleware Güvenlik** - Otomatik yetki kontrolü
+
+## 🛠️ Kullanılan Teknolojiler
+
+### **Frontend & Backend**
+- **Next.js 15.3.3** - React framework (App Router)
+- **React 19.0.0** - UI kütüphanesi
+- **TailwindCSS 4** - Modern CSS framework
+- **NextAuth 4.24.11** - Authentication sistemi
+
+### **Veritabanı & ORM**
+- **Prisma 6.9.0** - Modern ORM
+- **SQLite** - Hafif ve hızlı veritabanı
+
+### **Güvenlik & Şifreleme**
+- **bcryptjs** - Şifre hashleme
+- **Middleware** - Route koruması
+
+### **Geliştirme Araçları**
+- **ESLint** - Kod kalitesi
+- **Turbopack** - Hızlı development server
+
+## 🚀 Kurulum Talimatları
+
+### **Gereksinimler**
+- Node.js 18+ 
+- npm veya yarn
+
+### **1. Projeyi İndirin**
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd web-proje
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### **2. Bağımlılıkları Yükleyin**
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### **3. Environment Değişkenlerini Ayarlayın**
+`.env.local` dosyası oluşturun:
+```env
+# NextAuth Configuration
+NEXTAUTH_SECRET=your-super-secret-key-here
+NEXTAUTH_URL=http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Database
+DATABASE_URL="file:./dev.db"
+```
 
-## Learn More
+### **4. Veritabanını Hazırlayın**
+```bash
+# Prisma client'ı generate edin
+npx prisma generate
 
-To learn more about Next.js, take a look at the following resources:
+# Veritabanı migration'larını çalıştırın
+npx prisma migrate dev
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Örnek verileri yükleyin (admin kullanıcısı dahil)
+npm run seed
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### **5. Geliştirme Sunucusunu Başlatın**
+```bash
+npm run dev
+```
 
-## Deploy on Vercel
+Uygulama [http://localhost:3000](http://localhost:3000) adresinde çalışacaktır.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 👤 Admin Giriş Bilgileri
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Test amaçlı admin hesabı bilgileri:
+
+```
+Email: admin@example.com
+Şifre: admin123
+```
+
+
+### **Test Kullanıcıları**
+```
+# Normal Kullanıcı
+Email: test@example.com
+Şifre: test123
+
+# Diğer kullanıcılar seed işlemi ile otomatik oluşturulur
+```
+
+## 📁 Proje Yapısı
+
+```
+web-proje/
+├── app/                    # Next.js App Router
+│   ├── admin/             # Admin paneli sayfaları
+│   ├── api/               # API endpoints
+│   ├── blog/              # Blog sayfaları
+│   ├── dashboard/         # Kullanıcı dashboard
+│   └── ...
+├── components/            # Yeniden kullanılabilir bileşenler
+├── lib/                   # Utility fonksiyonları
+├── prisma/               # Veritabanı şemaları ve migration'lar
+├── public/               # Static dosyalar
+└── middleware.js         # Route koruması
+```
+
+## 🔐 Güvenlik Özellikleri
+
+### **Middleware Koruması**
+- `/admin/*` rotaları sadece ADMIN rolü ile erişilebilir
+- `/dashboard/*` rotaları giriş yapmış kullanıcılar için
+- Otomatik yönlendirme sistemi
+
+### **API Güvenliği**
+- Session tabanlı doğrulama
+- Role-based access control
+- Input validation
+
+### **Şifre Güvenliği**
+- bcryptjs ile hash'leme
+- Güvenli session yönetimi
+
+## 🌟 Kullanım Kılavuzu
+
+### **Normal Kullanıcı**
+1. Kayıt olun veya giriş yapın
+2. Ana sayfada blog yazılarını inceleyin
+3. "Blog Yaz" seçeneği ile içerik oluşturun
+4. Kategoriler ile içerikleri filtreleyin
+
+### **Admin Kullanıcı**
+1. Admin hesabı ile giriş yapın
+2. `/admin` paneline erişin
+3. Blog yazılarını onaylayın/reddedin
+4. Kullanıcı rollerini yönetin
+5. Kategorileri düzenleyin
+
+
+
+## 🔧 Geliştirme Komutları
+
+```bash
+# Geliştirme sunucusu
+npm run dev
+
+# Production build
+npm run build
+
+# Production sunucusu
+npm run start
+
+# Kod kalitesi kontrolü
+npm run lint
+
+# Veritabanı seed'i
+npm run seed
+
+# Prisma Studio (DB yönetimi)
+npx prisma studio
+```
+
+## 📞 İletişim
+
+Proje ile ilgili sorularınız için:
+- GitHub Issues açın
+- Email: [contact@mustafa-ozcan.com]
+

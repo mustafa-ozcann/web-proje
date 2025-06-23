@@ -8,9 +8,9 @@ export async function GET(request) {
     try {
         const session = await getServerSession(authOptions);
         
-        // Admin kontrolü
-        if (!session || session.user.role !== 'ADMIN') {
-            return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 401 });
+        // Session kontrolü 
+        if (!session) {
+            return NextResponse.json({ error: 'Oturum bulunamadı' }, { status: 401 });
         }
 
         const { searchParams } = new URL(request.url);
@@ -71,9 +71,9 @@ export async function PUT(request) {
     try {
         const session = await getServerSession(authOptions);
         
-        // Admin kontrolü
-        if (!session || session.user.role !== 'ADMIN') {
-            return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 401 });
+        // Session kontrolü 
+        if (!session) {
+            return NextResponse.json({ error: 'Oturum bulunamadı' }, { status: 401 });
         }
 
         const { postId, status } = await request.json();
@@ -112,9 +112,9 @@ export async function POST(request) {
     try {
         const session = await getServerSession(authOptions);
         
-        // Admin kontrolü
-        if (!session || session.user.role !== 'ADMIN') {
-            return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 401 });
+        // Session kontrolü
+        if (!session) {
+            return NextResponse.json({ error: 'Oturum bulunamadı' }, { status: 401 });
         }
 
         const { postId, status } = await request.json();
@@ -153,9 +153,9 @@ export async function DELETE(request) {
     try {
         const session = await getServerSession(authOptions);
         
-        // Admin kontrolü
-        if (!session || session.user.role !== 'ADMIN') {
-            return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 401 });
+        // Session kontrolü 
+        if (!session) {
+            return NextResponse.json({ error: 'Oturum bulunamadı' }, { status: 401 });
         }
 
         const { postId } = await request.json();

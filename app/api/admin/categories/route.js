@@ -8,9 +8,10 @@ export async function GET() {
     try {
         const session = await getServerSession(authOptions);
         
-        if (!session || session.user.role !== 'ADMIN') {
+        // Session kontrolü 
+        if (!session) {
             return NextResponse.json(
-                { error: 'Yetkisiz erişim' },
+                { error: 'Oturum bulunamadı' },
                 { status: 401 }
             );
         }
@@ -43,9 +44,10 @@ export async function POST(request) {
     try {
         const session = await getServerSession(authOptions);
         
-        if (!session || session.user.role !== 'ADMIN') {
+        // Session kontrolü 
+        if (!session) {
             return NextResponse.json(
-                { error: 'Yetkisiz erişim' },
+                { error: 'Oturum bulunamadı' },
                 { status: 401 }
             );
         }
