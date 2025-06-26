@@ -1,31 +1,120 @@
 @import "tailwindcss";
 
-/* Modern animasyonlar */
-@keyframes blob {
+/* Vintage Color Variables */
+:root {
+  --vintage-cream: #f4f1e8;
+  --vintage-beige: #e8e0d4;
+  --vintage-brown: #8b7355;
+  --vintage-green: #7d8471;
+  --vintage-blue: #9bb0c1;
+  --vintage-gray: #6b6b6b;
+  --vintage-dark: #2c2c2c;
+  --vintage-light: #faf9f6;
+  --vintage-paper: #f9f7f4;
+}
+
+/* Vintage themed animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gentleFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes paperShadow {
   0% {
-    transform: translate(0px, 0px) scale(1);
-  }
-  33% {
-    transform: translate(30px, -50px) scale(1.1);
-  }
-  66% {
-    transform: translate(-20px, 20px) scale(0.9);
+    box-shadow: 0 2px 8px rgba(139, 115, 85, 0.1);
   }
   100% {
-    transform: translate(0px, 0px) scale(1);
+    box-shadow: 0 8px 25px rgba(139, 115, 85, 0.15);
   }
 }
 
-.animate-blob {
-  animation: blob 7s infinite;
+.animate-fadeInUp {
+  animation: fadeInUp 0.6s ease-out forwards;
 }
 
-.animation-delay-2000 {
-  animation-delay: 2s;
+.animate-gentleFloat {
+  animation: gentleFloat 3s ease-in-out infinite;
 }
 
-.animation-delay-4000 {
-  animation-delay: 4s;
+.animate-paperShadow {
+  animation: paperShadow 0.3s ease-out forwards;
+}
+
+/* Vintage Paper Effect */
+.paper-texture {
+  background: linear-gradient(135deg, #f9f7f4 0%, #f4f1e8 100%);
+  box-shadow: 0 2px 8px rgba(139, 115, 85, 0.1);
+  border: 1px solid rgba(139, 115, 85, 0.08);
+}
+
+.paper-texture:hover {
+  animation: paperShadow 0.3s ease-out forwards;
+}
+
+/* Vintage Button Styles */
+.vintage-btn {
+  background: linear-gradient(135deg, var(--vintage-brown) 0%, #a08264 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(139, 115, 85, 0.2);
+}
+
+.vintage-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 115, 85, 0.3);
+}
+
+.vintage-btn-outline {
+  background: transparent;
+  color: var(--vintage-brown);
+  border: 2px solid var(--vintage-brown);
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.vintage-btn-outline:hover {
+  background: var(--vintage-brown);
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* Vintage Background Gradients */
+.vintage-bg {
+  background: linear-gradient(135deg, var(--vintage-light) 0%, var(--vintage-cream) 50%, var(--vintage-beige) 100%);
+}
+
+.vintage-accent-bg {
+  background: linear-gradient(135deg, var(--vintage-brown) 0%, var(--vintage-green) 100%);
+}
+
+/* Custom Shadows */
+.vintage-shadow {
+  box-shadow: 0 4px 20px rgba(139, 115, 85, 0.12);
+}
+
+.vintage-shadow-lg {
+  box-shadow: 0 8px 30px rgba(139, 115, 85, 0.15);
 }
 
 /* Line clamp utilities */
@@ -41,4 +130,38 @@
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
+}
+
+/* Vintage Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--vintage-cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--vintage-brown);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6d5a43;
+}
+
+/* Vintage Input Styles */
+.vintage-input {
+  background: var(--vintage-paper);
+  border: 2px solid rgba(139, 115, 85, 0.2);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  color: var(--vintage-dark);
+  transition: all 0.3s ease;
+}
+
+.vintage-input:focus {
+  outline: none;
+  border-color: var(--vintage-brown);
+  box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.1);
 }

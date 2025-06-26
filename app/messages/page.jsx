@@ -131,84 +131,159 @@ export default function Messages() {
 
     if (loading) {
         return (
-            <div className="max-w-6xl mx-auto p-6">
-                <div className="animate-pulse">
-                    <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
-                    <div className="h-64 bg-gray-200 rounded"></div>
+            <div className="min-h-screen vintage-bg">
+                <div className="max-w-6xl mx-auto p-6">
+                    <div className="animate-pulse">
+                        <div className="h-8 bg-[#8b7355]/10 rounded w-1/4 mb-8"></div>
+                        <div className="paper-texture rounded-2xl p-8">
+                            <div className="grid grid-cols-3 gap-6 h-96">
+                                <div className="space-y-4">
+                                    {[1,2,3,4].map(i => (
+                                        <div key={i} className="h-16 bg-[#8b7355]/10 rounded-xl"></div>
+                                    ))}
+                                </div>
+                                <div className="col-span-2 h-full bg-[#8b7355]/10 rounded-xl"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+        <div className="min-h-screen vintage-bg">
             <div className="max-w-6xl mx-auto p-6">
-                <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold text-gray-800 mb-2">Mesajlar</h1>
-                    <p className="text-gray-600">Diğer kullanıcılarla sohbet edin</p>
+                {/* Header */}
+                <div className="text-center mb-12 animate-fadeInUp">
+                    <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-[#8b7355] to-[#7d8471] rounded-2xl flex items-center justify-center shadow-lg">
+                        <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                        </svg>
+                    </div>
+                    <h1 className="text-4xl font-bold text-[#2c2c2c] mb-4">Mesajlar</h1>
+                    <p className="text-[#6b6b6b] text-lg">Toplulukla iletişim halinde kalın</p>
                 </div>
 
                 {error && (
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
-                        {error}
+                    <div className="paper-texture border border-red-200 text-red-700 px-6 py-4 rounded-2xl mb-8 animate-fadeInUp">
+                        <div className="flex items-center space-x-3">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                            </svg>
+                            <span className="font-medium">{error}</span>
+                        </div>
                     </div>
                 )}
 
-                <div className="flex gap-6 h-[calc(100vh-250px)]">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-[calc(100vh-300px)] animate-fadeInUp" style={{animationDelay: '0.2s'}}>
                     {/* Sol Taraf - Konuşmalar Listesi */}
-                    <div className="w-1/3 bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col">
-                    <div className="p-4 border-b relative">
-                        <h2 className="text-lg font-semibold">Konuşmalar</h2>
-                        <div className="mt-2">
-                            <input
-                                type="text"
-                                placeholder="Kullanıcı ara..."
-                                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                onChange={async (e) => {
-                                    const searchTerm = e.target.value.trim();
-                                    if (searchTerm && searchTerm.length >= 2) {
-                                        try {
-                                            const res = await fetch(`/api/user/search?q=${encodeURIComponent(searchTerm)}`);
-                                            const data = await res.json();
-                                            console.log('Kullanıcı arama API response:', data);
-                                            
-                                            if (res.ok && data.success && data.users && Array.isArray(data.users)) {
-                                                // conversations dizisindeki user id'leri ile eşleşenleri çıkar
-                                                const filteredUsers = data.users.filter(user =>
-                                                    !conversations.some(conv => conv.user.id === user.id)
-                                                );
-                                                setSearchResults(filteredUsers);
-                                            } else {
-                                                console.error('Arama sonucu geçersiz:', data);
+                    <div className="lg:col-span-1 paper-texture rounded-2xl vintage-shadow overflow-hidden flex flex-col">
+                        <div className="p-6 border-b border-[#8b7355]/10 relative">
+                            <h2 className="text-xl font-bold text-[#2c2c2c] mb-4">Konuşmalar</h2>
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    placeholder="Kullanıcı ara..."
+                                    className="vintage-input w-full pl-10"
+                                    onChange={async (e) => {
+                                        const searchTerm = e.target.value.trim();
+                                        if (searchTerm && searchTerm.length >= 2) {
+                                            try {
+                                                const res = await fetch(`/api/user/search?q=${encodeURIComponent(searchTerm)}`);
+                                                const data = await res.json();
+                                                
+                                                if (res.ok && data.success && data.users && Array.isArray(data.users)) {
+                                                    // conversations dizisindeki user id'leri ile eşleşenleri çıkar
+                                                    const filteredUsers = data.users.filter(user =>
+                                                        !conversations.some(conv => conv.user.id === user.id)
+                                                    );
+                                                    setSearchResults(filteredUsers);
+                                                } else {
+                                                    setSearchResults([]);
+                                                }
+                                            } catch (error) {
+                                                console.error('Kullanıcı arama hatası:', error);
                                                 setSearchResults([]);
                                             }
-                                        } catch (error) {
-                                            console.error('Kullanıcı arama hatası:', error);
+                                        } else {
                                             setSearchResults([]);
                                         }
-                                    } else {
-                                        setSearchResults([]);
-                                    }
-                                }}
-                            />
-                            {searchResults && searchResults.length > 0 && (
-                                <div className="absolute left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-10 max-h-48 overflow-y-auto">
-                                    {searchResults.map(user => (
+                                    }}
+                                />
+                                <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#6b6b6b]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                                
+                                {searchResults && searchResults.length > 0 && (
+                                    <div className="absolute left-0 right-0 top-full mt-2 paper-texture rounded-xl vintage-shadow z-10 max-h-48 overflow-y-auto border border-[#8b7355]/10">
+                                        {searchResults.map(user => (
+                                            <button
+                                                key={user.id}
+                                                className="w-full p-4 text-left hover:bg-[#8b7355]/5 flex items-center space-x-3 transition-colors first:rounded-t-xl last:rounded-b-xl"
+                                                onClick={() => {
+                                                    setSelectedUser(user);
+                                                    setSearchResults([]);
+                                                }}
+                                            >
+                                                <div className="w-10 h-10 bg-gradient-to-br from-[#8b7355] to-[#7d8471] rounded-xl flex items-center justify-center text-white font-bold">
+                                                    {(user.name || user.email || 'U').charAt(0).toUpperCase()}
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className="font-medium text-[#2c2c2c]">{user.name || 'İsimsiz Kullanıcı'}</p>
+                                                    {user.email && (
+                                                        <p className="text-xs text-[#6b6b6b]">{user.email}</p>
+                                                    )}
+                                                </div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        
+                        <div className="flex-1 overflow-y-auto">
+                            {conversations.length === 0 ? (
+                                <div className="p-8 text-center">
+                                    <div className="w-16 h-16 mx-auto mb-4 bg-[#8b7355]/10 rounded-2xl flex items-center justify-center">
+                                        <svg className="w-8 h-8 text-[#8b7355]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                        </svg>
+                                    </div>
+                                    <h3 className="text-lg font-semibold text-[#2c2c2c] mb-2">Henüz mesajınız yok</h3>
+                                    <p className="text-[#6b6b6b] text-sm">Yeni kullanıcılar bulun ve sohbet etmeye başlayın</p>
+                                </div>
+                            ) : (
+                                <div className="divide-y divide-[#8b7355]/10">
+                                    {conversations.map((conv) => (
                                         <button
-                                            key={user.id}
-                                            className="w-full p-2 text-left hover:bg-gray-50 flex items-center space-x-3"
-                                            onClick={() => {
-                                                setSelectedUser(user);
-                                                setSearchResults([]);
-                                            }}
+                                            key={conv.user.id}
+                                            onClick={() => setSelectedUser(conv.user)}
+                                            className={`w-full p-4 text-left hover:bg-[#8b7355]/5 flex items-center space-x-4 transition-all duration-300 ${
+                                                selectedUser?.id === conv.user.id ? 'bg-[#8b7355]/10' : ''
+                                            }`}
                                         >
-                                            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
-                                                {(user.name || user.email || 'U').charAt(0).toUpperCase()}
+                                            <div className="relative">
+                                                <div className="w-12 h-12 bg-gradient-to-br from-[#8b7355] to-[#7d8471] rounded-xl flex items-center justify-center text-white font-bold">
+                                                    {(conv.user.name || conv.user.email || 'U').charAt(0).toUpperCase()}
+                                                </div>
+                                                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
                                             </div>
-                                            <div>
-                                                <span className="font-medium">{user.name || 'İsimsiz Kullanıcı'}</span>
-                                                {user.email && (
-                                                    <div className="text-xs text-gray-500">{user.email}</div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex justify-between items-baseline mb-1">
+                                                    <h3 className="font-semibold text-[#2c2c2c] truncate">
+                                                        {conv.user.name || 'İsimsiz Kullanıcı'}
+                                                    </h3>
+                                                    {conv.lastMessage && (
+                                                        <span className="text-xs text-[#6b6b6b]">
+                                                            {new Date(conv.lastMessage.createdAt).toLocaleDateString('tr-TR')}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                {conv.lastMessage && (
+                                                    <p className="text-sm text-[#6b6b6b] truncate">
+                                                        {conv.lastMessage.content}
+                                                    </p>
                                                 )}
                                             </div>
                                         </button>
@@ -217,122 +292,142 @@ export default function Messages() {
                             )}
                         </div>
                     </div>
-                    <div className="flex-1 overflow-y-auto">
-                        {conversations.length === 0 ? (
-                            <div className="p-4 text-gray-500 text-center">
-                                Henüz bir konuşmanız yok
-                            </div>
-                        ) : (
-                            <div className="divide-y">
-                                {conversations.map((conv) => (
-                                    <button
-                                        key={conv.user.id}
-                                        onClick={() => setSelectedUser(conv.user)}
-                                        className={`w-full p-4 text-left hover:bg-gray-50 flex items-center space-x-3 ${
-                                            selectedUser?.id === conv.user.id ? 'bg-blue-50' : ''
-                                        }`}
-                                    >
-                                        <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
-                                            {(conv.user.name || conv.user.email || 'U').charAt(0).toUpperCase()}
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex justify-between items-baseline">
-                                                <h3 className="text-sm font-medium truncate">
-                                                    {conv.user.name || 'İsimsiz Kullanıcı'}
-                                                </h3>
-                                                {conv.lastMessage && (
-                                                    <span className="text-xs text-gray-500">
-                                                        {new Date(conv.lastMessage.createdAt).toLocaleDateString()}
-                                                    </span>
-                                                )}
+
+                    {/* Sağ Taraf - Mesajlaşma Alanı */}
+                    <div className="lg:col-span-2 paper-texture rounded-2xl vintage-shadow overflow-hidden flex flex-col">
+                        {selectedUser ? (
+                            <>
+                                {/* Mesajlaşma Başlığı */}
+                                <div className="p-6 border-b border-[#8b7355]/10 flex items-center justify-between">
+                                    <div className="flex items-center space-x-4">
+                                        <div className="relative">
+                                            <div className="w-14 h-14 bg-gradient-to-br from-[#8b7355] to-[#7d8471] rounded-xl flex items-center justify-center text-white font-bold text-lg">
+                                                {(selectedUser.name || selectedUser.email || 'U').charAt(0).toUpperCase()}
                                             </div>
-                                            {conv.lastMessage && (
-                                                <p className="text-sm text-gray-500 truncate">
-                                                    {conv.lastMessage.content}
-                                                </p>
-                                            )}
+                                            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-400 rounded-full border-2 border-white"></div>
                                         </div>
-                                    </button>
-                                ))}
+                                        <div>
+                                            <h2 className="text-xl font-bold text-[#2c2c2c]">{selectedUser.name || 'İsimsiz Kullanıcı'}</h2>
+                                            <Link
+                                                href={`/profile/${selectedUser.id}`}
+                                                className="text-sm text-[#8b7355] hover:text-[#6d5a43] transition-colors flex items-center space-x-1"
+                                            >
+                                                <span>Profili Görüntüle</span>
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                                </svg>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="flex items-center space-x-3">
+                                        <button className="p-2 hover:bg-[#8b7355]/5 rounded-lg transition-colors">
+                                            <svg className="w-5 h-5 text-[#6b6b6b]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Mesajlar */}
+                                <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-[#8b7355]/5 to-transparent">
+                                    {messages.length === 0 ? (
+                                        <div className="text-center py-12">
+                                            <div className="w-16 h-16 mx-auto mb-4 bg-[#8b7355]/10 rounded-2xl flex items-center justify-center">
+                                                <svg className="w-8 h-8 text-[#8b7355]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                                </svg>
+                                            </div>
+                                            <h3 className="text-lg font-semibold text-[#2c2c2c] mb-2">Henüz mesaj yok</h3>
+                                            <p className="text-[#6b6b6b]">İlk mesajı göndererek sohbeti başlatın</p>
+                                        </div>
+                                    ) : (
+                                        messages.map((message) => (
+                                            <div
+                                                key={message.id}
+                                                className={`flex ${
+                                                    message.senderId === session.user.id ? 'justify-end' : 'justify-start'
+                                                }`}
+                                            >
+                                                <div
+                                                    className={`max-w-[70%] rounded-2xl p-4 ${
+                                                        message.senderId === session.user.id
+                                                            ? 'vintage-accent-bg text-white'
+                                                            : 'paper-texture border border-[#8b7355]/10'
+                                                    }`}
+                                                >
+                                                    <p className="text-sm leading-relaxed">{message.content}</p>
+                                                    <span className={`text-xs mt-2 block ${
+                                                        message.senderId === session.user.id 
+                                                            ? 'text-white/80' 
+                                                            : 'text-[#6b6b6b]'
+                                                    }`}>
+                                                        {new Date(message.createdAt).toLocaleTimeString('tr-TR')}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                    <div ref={messagesEndRef} />
+                                </div>
+
+                                {/* Mesaj Gönderme Formu */}
+                                <div className="p-6 border-t border-[#8b7355]/10">
+                                    <form onSubmit={handleSendMessage} className="flex space-x-4">
+                                        <div className="flex-1 relative">
+                                            <input
+                                                type="text"
+                                                value={newMessage}
+                                                onChange={(e) => setNewMessage(e.target.value)}
+                                                placeholder="Mesajınızı yazın..."
+                                                className="vintage-input w-full pl-4 pr-12"
+                                                disabled={sending}
+                                            />
+                                            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                                                <svg className="w-5 h-5 text-[#6b6b6b]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 4v16l5.81-5.28a2 2 0 012.38 0L21 20V4a2 2 0 00-2-2H9a2 2 0 00-2 2z" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <button
+                                            type="submit"
+                                            disabled={sending || !newMessage.trim()}
+                                            className={`vintage-btn px-6 py-3 flex items-center space-x-2 ${
+                                                sending || !newMessage.trim() ? 'opacity-50 cursor-not-allowed' : ''
+                                            }`}
+                                        >
+                                            {sending ? (
+                                                <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                            ) : (
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                                </svg>
+                                            )}
+                                            <span>{sending ? 'Gönderiliyor...' : 'Gönder'}</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="flex-1 flex items-center justify-center">
+                                <div className="text-center">
+                                    <div className="w-24 h-24 mx-auto mb-6 bg-[#8b7355]/10 rounded-2xl flex items-center justify-center">
+                                        <svg className="w-12 h-12 text-[#8b7355]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                        </svg>
+                                    </div>
+                                    <h3 className="text-2xl font-bold text-[#2c2c2c] mb-2">Mesajlaşmaya Başlayın</h3>
+                                    <p className="text-[#6b6b6b] max-w-md">
+                                        Sol panelden bir konuşma seçin veya yeni kullanıcı arayarak sohbete başlayın
+                                    </p>
+                                </div>
                             </div>
                         )}
                     </div>
                 </div>
-
-                {/* Sağ Taraf - Mesajlaşma Alanı */}
-                <div className="flex-1 bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
-                    {selectedUser ? (
-                        <>
-                            {/* Mesajlaşma Başlığı */}
-                            <div className="p-4 border-b flex items-center space-x-3">
-                                <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
-                                    {(selectedUser.name || selectedUser.email || 'U').charAt(0).toUpperCase()}
-                                </div>
-                                <div>
-                                    <h2 className="font-semibold">{selectedUser.name || 'İsimsiz Kullanıcı'}</h2>
-                                    <Link
-                                        href={`/profile/${selectedUser.id}`}
-                                        className="text-sm text-blue-500 hover:text-blue-600"
-                                    >
-                                        Profili Görüntüle
-                                    </Link>
-                                </div>
-                            </div>
-
-                            {/* Mesajlar */}
-                            <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                                {messages.map((message) => (
-                                    <div
-                                        key={message.id}
-                                        className={`flex ${
-                                            message.senderId === session.user.id ? 'justify-end' : 'justify-start'
-                                        }`}
-                                    >
-                                        <div
-                                            className={`max-w-[70%] rounded-lg p-3 ${
-                                                message.senderId === session.user.id
-                                                    ? 'bg-blue-500 text-white'
-                                                    : 'bg-gray-100'
-                                            }`}
-                                        >
-                                            <p className="text-sm">{message.content}</p>
-                                            <span className="text-xs opacity-75 mt-1 block">
-                                                {new Date(message.createdAt).toLocaleTimeString()}
-                                            </span>
-                                        </div>
-                                    </div>
-                                ))}
-                                <div ref={messagesEndRef} />
-                            </div>
-
-                            {/* Mesaj Gönderme Formu */}
-                            <div className="p-4 border-t">
-                                <form onSubmit={handleSendMessage} className="flex space-x-2">
-                                    <input
-                                        type="text"
-                                        value={newMessage}
-                                        onChange={(e) => setNewMessage(e.target.value)}
-                                        placeholder="Mesajınızı yazın..."
-                                        className="flex-1 px-4 py-2 border rounded-full focus:outline-none focus:border-blue-500"
-                                        disabled={sending}
-                                    />
-                                    <button
-                                        type="submit"
-                                        disabled={sending || !newMessage.trim()}
-                                        className="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 disabled:bg-blue-300 transition-colors"
-                                    >
-                                        {sending ? 'Gönderiliyor...' : 'Gönder'}
-                                    </button>
-                                </form>
-                            </div>
-                        </>
-                    ) : (
-                        <div className="flex-1 flex items-center justify-center text-gray-500">
-                            Mesajlaşmak için bir konuşma seçin
-                        </div>
-                    )}
-                </div>
-            </div>
             </div>
         </div>
     );
