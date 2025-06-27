@@ -19,9 +19,25 @@ export default function Header() {
             }
         };
 
+        const handleProfileUpdate = async () => {
+            if (session) {
+                await updateSession();
+            }
+        };
+
+        // Custom event listener for profile updates
+        const handleUserProfileUpdated = (event) => {
+            const updatedUser = event.detail;
+            // Update session manually with new user data
+            updateSession();
+        };
+
         document.addEventListener('visibilitychange', handleVisibilityChange);
+        document.addEventListener('userProfileUpdated', handleUserProfileUpdated);
+        
         return () => {
             document.removeEventListener('visibilitychange', handleVisibilityChange);
+            document.removeEventListener('userProfileUpdated', handleUserProfileUpdated);
         };
     }, [session, updateSession]);
 
@@ -52,7 +68,7 @@ export default function Header() {
                     <div className="flex items-center">
                         <Link href="/" className="text-3xl font-bold text-[#8b7355] hover:text-[#6d5a43] transition-colors duration-300">
                             <span className="relative">
-                                Vintage Blog
+                                TBT Blog
                                 <div className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-[#8b7355] to-[#7d8471] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
                             </span>
                         </Link>

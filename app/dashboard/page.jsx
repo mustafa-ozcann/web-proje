@@ -113,9 +113,11 @@ export default function Dashboard() {
             setUpdateMessage('Profil başarıyla güncellendi');
             await updateSession();
             
-            // Header'daki ismi güncellemek için visibilitychange event'ini tetikle
-            const event = new Event('visibilitychange');
-            document.dispatchEvent(event);
+            // Header'daki ismi güncellemek için custom event tetikle
+            const profileUpdateEvent = new CustomEvent('userProfileUpdated', {
+                detail: data
+            });
+            document.dispatchEvent(profileUpdateEvent);
 
             // Şifre alanlarını temizle
             setFormData(prev => ({

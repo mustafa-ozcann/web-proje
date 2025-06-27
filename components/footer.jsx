@@ -1,16 +1,21 @@
+"use client";
 import React from 'react'
+import { usePathname } from 'next/navigation';
 
 export default function Footer() {
+    const pathname = usePathname();
+    if (pathname.startsWith("/admin")) return null;
+    
     return (
         <footer className="paper-texture border-t-2 border-[#8b7355]/10 mt-auto">
             <div className="max-w-7xl mx-auto px-6 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
                     {/* Logo ve Açıklama */}
                     <div className="space-y-4">
-                        <h3 className="text-2xl font-bold text-[#8b7355]">Vintage Blog</h3>
+                        <h3 className="text-2xl font-bold text-[#8b7355]">TBT Blog</h3>
                         <p className="text-[#6b6b6b] text-sm leading-relaxed">
                             Minimalist tasarım anlayışı ile sizlere ilham verici içerikler sunuyoruz. 
-                            Vintage estetik ve modern teknolojinin buluştuğu platformumuzda siz de yerinizi alın.
+                            TBT Blog'da modern teknoloji ve kaliteli içeriğin buluştuğu platformumuzda siz de yerinizi alın.
                         </p>
                         <div className="flex justify-center md:justify-start space-x-4">
                             <div className="w-8 h-8 bg-gradient-to-br from-[#8b7355] to-[#7d8471] rounded-lg flex items-center justify-center text-white hover:scale-110 transition-transform duration-300 cursor-pointer">
@@ -74,7 +79,7 @@ export default function Footer() {
                     <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                         <div className="text-center md:text-left">
                             <p className="text-[#6b6b6b] text-sm">
-                                © 2024 Vintage Blog. Tüm hakları saklıdır.
+                                © 2024 TBT Blog. Tüm hakları saklıdır.
                             </p>
                             <p className="text-[#8b7355] text-xs mt-1 font-medium">
                                 Tasarım: <span className="hover:text-[#6d5a43] transition-colors cursor-pointer">Mustafa Özcan</span>

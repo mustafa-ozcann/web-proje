@@ -117,7 +117,7 @@ export default function Home() {
                                 </>
                             ) : (
                                 <h1 className="text-4xl md:text-6xl font-bold text-[#2c2c2c] leading-tight">
-                                    Vintage Blog
+                                    TBT Blog
                                     <span className="block text-lg md:text-xl font-normal text-[#6b6b6b] mt-4">
                                         Minimalist tasarım, maksimum etki
                                     </span>

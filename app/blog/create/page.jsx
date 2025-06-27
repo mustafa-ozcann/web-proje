@@ -90,7 +90,7 @@ export default function CreateBlog() {
             }
 
             // Başarı bildirimi göster
-            setToastMessage('Blog yazınız incelemeye alındı! Admin onayından sonra yayınlanacaktır.');
+            setToastMessage('Blog yazınız başarıyla oluşturuldu ve admin onayına gönderildi! Onaylandıktan sonra TBT Blog\'da yayınlanacaktır.');
             setToastType('success');
             setShowToast(true);
 
@@ -122,7 +122,7 @@ export default function CreateBlog() {
     };
 
     return (
-        <div className="min-h-screen vintage-bg">
+        <div className="min-h-screen vintage-bg overflow-x-hidden">
             <div className="max-w-4xl mx-auto p-6">
                 {/* Header */}
                 <div className="text-center mb-12 animate-fadeInUp">
@@ -152,9 +152,9 @@ export default function CreateBlog() {
                     )}
 
                     <form onSubmit={handleSubmit} className="space-y-8">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 min-w-0">
                             {/* Sol Kolon */}
-                            <div className="space-y-6">
+                            <div className="space-y-6 min-w-0">
                                 <div>
                                     <label htmlFor="title" className="block text-sm font-semibold text-[#2c2c2c] mb-3">
                                         Başlık *
@@ -214,7 +214,7 @@ export default function CreateBlog() {
                             </div>
 
                             {/* Sağ Kolon - Preview */}
-                            <div className="bg-[#8b7355]/5 rounded-xl p-6 border border-[#8b7355]/10">
+                            <div className="bg-[#8b7355]/5 rounded-xl p-6 border border-[#8b7355]/10 overflow-hidden">
                                 <h3 className="text-lg font-semibold text-[#2c2c2c] mb-4 flex items-center">
                                     <svg className="w-5 h-5 mr-2 text-[#8b7355]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -223,7 +223,7 @@ export default function CreateBlog() {
                                     Önizleme
                                 </h3>
                                 
-                                <div className="space-y-4">
+                                <div className="space-y-4 min-w-0">
                                     {formData.imageUrl && (
                                         <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
                                             <img 
@@ -237,8 +237,8 @@ export default function CreateBlog() {
                                         </div>
                                     )}
                                     
-                                    <div>
-                                        <h4 className={`font-bold text-[#2c2c2c] ${formData.title ? '' : 'text-gray-400'}`}>
+                                    <div className="min-w-0">
+                                        <h4 className={`font-bold text-[#2c2c2c] break-words ${formData.title ? '' : 'text-gray-400'}`}>
                                             {formData.title || 'Yazı başlığı buraya gelecek'}
                                         </h4>
                                         
@@ -249,9 +249,11 @@ export default function CreateBlog() {
                                         )}
                                     </div>
                                     
-                                    <p className={`text-sm ${formData.content ? 'text-[#6b6b6b]' : 'text-gray-400'}`}>
-                                        {formData.content.substring(0, 150) + (formData.content.length > 150 ? '...' : '') || 'İçerik önizlemesi buraya gelecek'}
-                                    </p>
+                                    <div className="min-w-0">
+                                        <p className={`text-sm break-words overflow-hidden ${formData.content ? 'text-[#6b6b6b]' : 'text-gray-400'}`}>
+                                            {formData.content.substring(0, 150) + (formData.content.length > 150 ? '...' : '') || 'İçerik önizlemesi buraya gelecek'}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>

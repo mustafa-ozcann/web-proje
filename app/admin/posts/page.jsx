@@ -11,6 +11,7 @@ export default function Posts() {
     const [status, setStatus] = useState('ALL');
     const [page, setPage] = useState(1);
     const [pagination, setPagination] = useState(null);
+    const [isResetting, setIsResetting] = useState(false);
     const { data: session } = useSession();
     const router = useRouter();
 
@@ -79,6 +80,51 @@ export default function Posts() {
         }
     };
 
+    const handleResetData = async () => {
+        const confirmMessage = `
+        ⚠️ DİKKAT: Bu işlem geri alınamaz!
+        
+        Aşağıdaki veriler silinecek:
+        • Seed kullanıcıları dışındaki tüm kullanıcılar
+        • Seed kullanıcıları dışındaki tüm blog yazıları  
+        • Tüm mesajlar
+        
+        Korunacak veriler:
+        • admin@example.com ve test@example.com kullanıcıları
+        • Kategoriler
+        
+        Bu işlemi yapmak istediğinizden emin misiniz?`.trim();
+
+        if (!confirm(confirmMessage)) {
+            return;
+        }
+
+        try {
+            setIsResetting(true);
+            const response = await fetch('/api/admin/reset-data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Veriler sıfırlanırken hata oluştu');
+            }
+
+            alert('✅ Veriler başarıyla sıfırlandı!');
+            // Blog listesini yenile
+            fetchPosts();
+        } catch (err) {
+            setError(err.message);
+            alert('❌ Hata: ' + err.message);
+        } finally {
+            setIsResetting(false);
+        }
+    };
+
     if (loading) {
         return (
             <div className="space-y-6">
@@ -87,7 +133,7 @@ export default function Posts() {
                     <div className="paper-texture rounded-2xl p-8">
                         <div className="space-y-4">
                             {[1,2,3,4,5].map(i => (
-                                <div key={i} className="h-16 bg-[#8b7355]/10 rounded-xl"></div>
+                                <div key={`loading-skeleton-${i}`} className="h-16 bg-[#8b7355]/10 rounded-xl"></div>
                             ))}
                         </div>
                     </div>
@@ -134,26 +180,55 @@ export default function Posts() {
                     <p className="text-[#6b6b6b]">Blog yazılarını onaylayın, reddedin veya silin</p>
                 </div>
                 
-                <div className="flex items-center space-x-4">
-                    {statusOptions.map((option) => (
-                        <button
-                            key={option.value}
-                            onClick={() => {
-                                setStatus(option.value);
-                                setPage(1);
-                            }}
-                            className={`px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
-                                status === option.value
-                                    ? 'vintage-accent-bg text-white vintage-shadow'
-                                    : 'paper-texture hover:bg-[#8b7355]/5 text-[#6b6b6b] hover:text-[#8b7355]'
-                            }`}
-                        >
-                            {option.label}
-                            {option.count && status === 'ALL' && (
-                                <span className="ml-2 text-xs opacity-75">({option.count})</span>
-                            )}
-                        </button>
-                    ))}
+                <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4">
+                    <div className="flex items-center space-x-4">
+                        {statusOptions.map((option) => (
+                            <button
+                                key={option.value}
+                                onClick={() => {
+                                    setStatus(option.value);
+                                    setPage(1);
+                                }}
+                                className={`px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
+                                    status === option.value
+                                        ? 'vintage-accent-bg text-white vintage-shadow'
+                                        : 'paper-texture hover:bg-[#8b7355]/5 text-[#6b6b6b] hover:text-[#8b7355]'
+                                }`}
+                            >
+                                {option.label}
+                                {option.count && status === 'ALL' && (
+                                    <span className="ml-2 text-xs opacity-75">({option.count})</span>
+                                )}
+                            </button>
+                        ))}
+                    </div>
+                    
+                    <button
+                        onClick={handleResetData}
+                        disabled={isResetting}
+                        className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 border-2 flex items-center space-x-2 ${
+                            isResetting
+                                ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                                : 'bg-red-50 text-red-600 border-red-200 hover:bg-red-100 hover:border-red-300'
+                        }`}
+                        title="Seed kullanıcıları dışındaki tüm verileri siler"
+                    >
+                        {isResetting ? (
+                            <>
+                                <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                <span>Sıfırlanıyor...</span>
+                            </>
+                        ) : (
+                            <>
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                <span>Verileri Sıfırla</span>
+                            </>
+                        )}
+                    </button>
                 </div>
             </div>
 
@@ -297,7 +372,7 @@ export default function Posts() {
                             const pageNumber = Math.max(1, Math.min(page - 2 + i, pagination.totalPages - 4 + i));
                             return (
                                 <button
-                                    key={pageNumber}
+                                    key={`page-${pageNumber}-${i}`}
                                     onClick={() => setPage(pageNumber)}
                                     className={`w-12 h-12 rounded-xl font-medium transition-all duration-300 ${
                                         page === pageNumber
